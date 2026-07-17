@@ -83,12 +83,12 @@ class DownloadService {
     );
 
     final galleryResult = await SaverGallery.saveFile(
-      file: tmpPath,
-      name: fileName,
+      filePath: tmpPath,
+      fileName: fileName,
       androidRelativePath: item.type == MediaType.video
           ? 'Movies/FBMediaSaver'
           : 'Pictures/FBMediaSaver',
-      androidExistNotSave: false,
+      skipIfExists: false,
     );
     if (!galleryResult.isSuccess) {
       try {

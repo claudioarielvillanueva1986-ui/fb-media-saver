@@ -6,7 +6,8 @@
 build/
 .flutter-plugins
 .flutter-plugins-dependencies
-pubspec.lock
+# pubspec.lock SÍ se commitea: esto es una app (no un paquete), así que se
+# fija para que local y CI resuelvan siempre las mismas versiones exactas.
 
 # IDE
 .idea/
