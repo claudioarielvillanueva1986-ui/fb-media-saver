@@ -40,8 +40,35 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  # Ícono y splash (ver README, sección "Ícono y splash"). Se corren a mano
+  # con dart run; no afectan el build normal.
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.1
 
 flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/icon/
+    - assets/splash/
+
+# Config de flutter_launcher_icons (dart run flutter_launcher_icons).
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "#1877F2"
+  adaptive_icon_foreground: "assets/icon/icon_foreground.png"
+
+# Config de flutter_native_splash (dart run flutter_native_splash:create).
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/splash/splash_logo.png
+  color_dark: "#0D1B2A"
+  image_dark: assets/splash/splash_logo.png
+  android_12:
+    image: assets/splash/splash_logo.png
+    color: "#FFFFFF"
+    color_dark: "#0D1B2A"
+  android: true
+  ios: false

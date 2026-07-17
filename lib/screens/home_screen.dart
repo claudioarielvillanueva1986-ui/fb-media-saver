@@ -24,22 +24,39 @@ class _HomeScreenState extends State<HomeScreen> {
   final _downloader = DownloadService();
 
   bool _loading = false;
+  bool _hasSearched = false;
   double _progress = 0;
   String? _status;
+  String? _urlError;
   List<MediaItem> _results = [];
 
   Future<void> _pasteFromClipboard() async {
     final data = await Clipboard.getData(Clipboard.kTextPlain);
-    if (data?.text != null) _urlController.text = data!.text!.trim();
+    if (data?.text != null) {
+      setState(() {
+        _urlController.text = data!.text!.trim();
+        _urlError = null;
+      });
+    }
   }
 
   Future<void> _extract() async {
     FocusScope.of(context).unfocus();
     final url = _urlController.text.trim();
     if (url.isEmpty) return;
+
+    if (!FacebookExtractor.isFacebookUrl(url)) {
+      setState(() => _urlError =
+          'Ese enlace no parece ser de Facebook. Pegá un link de un post, '
+          'video, reel o foto.');
+      return;
+    }
+
     setState(() {
       _loading = true;
+      _hasSearched = true;
       _status = 'Analizando el enlace...';
+      _urlError = null;
       _results = [];
     });
     try {
@@ -149,11 +166,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 12),
                 TextField(
                   controller: _urlController,
+                  onChanged: (_) {
+                    if (_urlError != null) setState(() => _urlError = null);
+                  },
+                  onSubmitted: (_) => _loading ? null : _extract(),
                   decoration: InputDecoration(
                     hintText: 'https://www.facebook.com/...',
                     border: const OutlineInputBorder(),
+                    errorText: _urlError,
+                    errorMaxLines: 2,
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.content_paste),
+                      tooltip: 'Pegar',
                       onPressed: _pasteFromClipboard,
                     ),
                   ),
@@ -175,12 +199,37 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Text(_status!),
                     ),
                 ],
-                const SizedBox(height: 16),
-                ..._results.map(_resultTile),
+                const SizedBox(height: 24),
+                if (_results.isNotEmpty)
+                  ..._results.map(_resultTile)
+                else if (!_loading)
+                  _buildEmptyState(),
               ],
             ),
           ),
           const SafeArea(child: BannerAdWidget()),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    final icon = _hasSearched ? Icons.search_off : Icons.link;
+    final text = _hasSearched
+        ? 'No hay resultados para mostrar todavía.'
+        : 'Pegá el enlace de un post, reel, video o foto pública de '
+            'Facebook y tocá "Analizar" para ver qué se puede descargar.';
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 32),
+      child: Column(
+        children: [
+          Icon(icon, size: 56, color: Theme.of(context).colorScheme.outline),
+          const SizedBox(height: 12),
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Theme.of(context).colorScheme.outline),
+          ),
         ],
       ),
     );

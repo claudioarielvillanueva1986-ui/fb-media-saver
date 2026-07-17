@@ -128,25 +128,34 @@ class FacebookExtractor {
     'fb.me',
   };
 
-  String _normalizeAndValidate(String rawUrl) {
+  /// Valida (sin lanzar excepciones) si [rawUrl] parece un enlace de
+  /// Facebook. Útil para validar el input en la UI antes de analizar.
+  static bool isFacebookUrl(String rawUrl) {
     var u = rawUrl.trim();
-    if (u.isEmpty) {
-      throw const FacebookExtractorException('Pegá un enlace de Facebook.');
-    }
+    if (u.isEmpty) return false;
     if (!u.startsWith('http://') && !u.startsWith('https://')) {
       u = 'https://$u';
     }
-
     final uri = Uri.tryParse(u);
     final host = uri?.host.toLowerCase() ?? '';
-    final isFacebook =
-        _facebookHosts.contains(host) || host.endsWith('.facebook.com');
-    if (uri == null || !isFacebook) {
+    return uri != null &&
+        (_facebookHosts.contains(host) || host.endsWith('.facebook.com'));
+  }
+
+  String _normalizeAndValidate(String rawUrl) {
+    final u = rawUrl.trim();
+    if (u.isEmpty) {
+      throw const FacebookExtractorException('Pegá un enlace de Facebook.');
+    }
+    if (!isFacebookUrl(u)) {
       throw const FacebookExtractorException(
         'Ese enlace no parece ser de Facebook. Pegá un link de un post, '
         'video, reel o foto (facebook.com, m.facebook.com o fb.watch).',
       );
     }
+    final normalized =
+        u.startsWith('http://') || u.startsWith('https://') ? u : 'https://$u';
+    final uri = Uri.parse(normalized);
     return uri.toString();
   }
 
