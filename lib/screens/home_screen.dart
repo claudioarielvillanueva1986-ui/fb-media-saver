@@ -122,6 +122,11 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('FB Media Saver'),
         actions: [
           IconButton(
+            tooltip: 'Opciones de privacidad',
+            icon: const Icon(Icons.privacy_tip_outlined),
+            onPressed: () => AdsService.instance.showPrivacyOptionsIfRequired(),
+          ),
+          IconButton(
             tooltip: 'Iniciar sesión en Facebook',
             icon: const Icon(Icons.login),
             onPressed: () => Navigator.push(

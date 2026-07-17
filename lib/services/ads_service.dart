@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../utils/constants.dart';
@@ -19,9 +21,48 @@ class AdsService extends ChangeNotifier {
 
   Future<void> init() async {
     if (_initialized) return;
+    // Consentimiento (UMP/GDPR): en la UE/EEE hay que preguntar antes de
+    // pedir anuncios personalizados. Fuera de esa región, no hace falta
+    // mostrar nada y esto no bloquea el arranque.
+    await _gatherConsent();
     await MobileAds.instance.initialize();
     _initialized = true;
     _loadInterstitial();
+  }
+
+  /// Pide el estado de consentimiento y muestra el formulario UMP solo si
+  /// corresponde (usuario en EEE/Reino Unido). Tiene un timeout corto para
+  /// no bloquear el arranque de la app si Google no responde.
+  Future<void> _gatherConsent() async {
+    final completer = Completer<void>();
+
+    ConsentInformation.instance.requestConsentInfoUpdate(
+      ConsentRequestParameters(),
+      () {
+        ConsentForm.loadAndShowConsentFormIfRequired((formError) {
+          if (!completer.isCompleted) completer.complete();
+        });
+      },
+      (formError) {
+        // No se pudo actualizar el estado de consentimiento (p.ej. sin red):
+        // seguimos sin bloquear la app.
+        if (!completer.isCompleted) completer.complete();
+      },
+    );
+
+    await completer.future.timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {},
+    );
+  }
+
+  /// Reabre las opciones de privacidad (botón "Opciones de privacidad" que
+  /// exige GDPR cuando aplica). Sin efecto si no es requerido.
+  Future<void> showPrivacyOptionsIfRequired() async {
+    final status =
+        await ConsentInformation.instance.getPrivacyOptionsRequirementStatus();
+    if (status != PrivacyOptionsRequirementStatus.required) return;
+    await ConsentForm.showPrivacyOptionsForm((_) {});
   }
 
   // --- Banner ---
