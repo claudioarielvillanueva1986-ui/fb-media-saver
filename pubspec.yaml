@@ -20,6 +20,7 @@ dependencies:
   dio: ^5.4.0                   # descargas con progreso y cancelación
   path_provider: ^2.1.2
   permission_handler: ^11.3.0
+  device_info_plus: ^10.1.2     # detectar versión de Android para pedir el permiso correcto
   saver_gallery: ^3.0.6         # guardar en la galería (fotos/videos)
   open_filex: ^4.4.0
 

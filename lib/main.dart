@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'services/ads_service.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_navigation_screen.dart';
 import 'utils/constants.dart';
 
 Future<void> main() async {
@@ -27,7 +27,7 @@ class FbMediaSaverApp extends StatelessWidget {
         useMaterial3: true,
         brightness: Brightness.dark,
       ),
-      home: const HomeScreen(),
+      home: const MainNavigationScreen(),
     );
   }
 }

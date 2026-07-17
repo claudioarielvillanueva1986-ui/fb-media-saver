@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
+import '../models/download_history_entry.dart';
 import '../models/media_item.dart';
 import '../services/ads_service.dart';
 import '../services/download_service.dart';
 import '../services/facebook_extractor.dart';
+import '../services/history_service.dart';
 import '../widgets/banner_ad_widget.dart';
 import 'webview_login_screen.dart';
 
@@ -59,11 +62,19 @@ class _HomeScreenState extends State<HomeScreen> {
       _status = 'Descargando...';
     });
     try {
-      await _downloader.download(item, onProgress: (p) {
+      final result = await _downloader.download(item, onProgress: (p) {
         setState(() => _progress = p);
       });
+      await HistoryService.instance.add(DownloadHistoryEntry(
+        fileName: result.fileName,
+        type: item.type,
+        date: DateTime.now(),
+        path: result.path,
+      ));
       AdsService.instance.onDownloadCompleted();
       _snack('¡Guardado en la galería!');
+    } on PermissionDeniedException catch (e) {
+      _showPermissionDialog(e.message);
     } catch (e) {
       _snack(e.toString().replaceFirst('Exception: ', ''));
     } finally {
@@ -72,6 +83,30 @@ class _HomeScreenState extends State<HomeScreen> {
         _status = null;
       });
     }
+  }
+
+  void _showPermissionDialog(String message) {
+    if (!mounted) return;
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Permisos necesarios'),
+        content: Text('$message\n\nActivalos desde los ajustes de la app.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              openAppSettings();
+            },
+            child: const Text('Abrir ajustes'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _snack(String msg) {
