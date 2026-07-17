@@ -1,0 +1,46 @@
+name: fb_media_saver
+description: "Descarga videos y fotos públicos de Facebook. Monetizado con AdMob de forma no invasiva."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+
+  # Red / parsing
+  http: ^1.2.0
+  html: ^0.15.4                 # parseo de HTML del post público
+
+  # Descarga y guardado
+  dio: ^5.4.0                   # descargas con progreso y cancelación
+  path_provider: ^2.1.2
+  permission_handler: ^11.3.0
+  saver_gallery: ^3.0.6         # guardar en la galería (fotos/videos)
+  open_filex: ^4.4.0
+
+  # Login / contenido propio del usuario
+  flutter_inappwebview: ^6.0.0  # webview para login de Facebook y captura de sesión
+
+  # Estado y utilidades
+  provider: ^6.1.2
+  shared_preferences: ^2.2.2
+  share_plus: ^9.0.0
+  url_launcher: ^6.2.5
+
+  # Anuncios
+  google_mobile_ads: ^5.1.0     # AdMob (banner + intersticial no invasivo)
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
