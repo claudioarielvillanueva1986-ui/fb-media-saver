@@ -52,7 +52,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
       _snack('El archivo ya no está disponible en este dispositivo.');
       return;
     }
-    await Share.shareXFiles([XFile(entry.path)]);
+    await SharePlus.instance.share(ShareParams(files: [XFile(entry.path)]));
   }
 
   Future<void> _remove(DownloadHistoryEntry entry) async {

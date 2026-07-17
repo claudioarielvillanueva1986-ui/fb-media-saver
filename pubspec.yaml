@@ -20,17 +20,17 @@ dependencies:
   dio: ^5.4.0                   # descargas con progreso y cancelación
   path_provider: ^2.1.2
   permission_handler: ^11.3.0
-  device_info_plus: ^10.1.2     # detectar versión de Android para pedir el permiso correcto
+  device_info_plus: ^11.2.0     # detectar versión de Android para pedir el permiso correcto
   saver_gallery: ^3.0.6         # guardar en la galería (fotos/videos)
   open_filex: ^4.4.0
 
   # Login / contenido propio del usuario
-  flutter_inappwebview: ^6.0.0  # webview para login de Facebook y captura de sesión
+  flutter_inappwebview: ^6.1.5  # webview para login de Facebook y captura de sesión
 
   # Estado y utilidades
   provider: ^6.1.2
   shared_preferences: ^2.2.2
-  share_plus: ^9.0.0
+  share_plus: ^12.0.2
   url_launcher: ^6.2.5
 
   # Anuncios
