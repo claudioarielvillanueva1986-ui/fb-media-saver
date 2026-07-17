@@ -5,16 +5,21 @@ AdMob de forma no invasiva.
 
 ## Arquitectura actual
 
-- `lib/main.dart` — entrypoint, inicializa AdMob, tema Material 3.
+- `lib/main.dart` — entrypoint, inicializa AdMob (con consentimiento UMP), tema Material 3.
 - `lib/utils/constants.dart` — config central (AdMob IDs de prueba, política de ads, user-agent).
 - `lib/models/media_item.dart` — modelo de medio descargable.
-- `lib/services/facebook_extractor.dart` — extrae URLs de medios del HTML del post. **Robustecer.**
-- `lib/services/download_service.dart` — descarga con dio + guarda en galería.
-- `lib/services/ads_service.dart` — banner + intersticial con reglas no invasivas.
+- `lib/models/download_history_entry.dart` — registro del historial de descargas.
+- `lib/services/facebook_extractor.dart` — extrae URLs de medios (video HD/SD, fotos) del HTML del post; usa cookies de sesión si hay. Ver tests en `test/services/`.
+- `lib/services/download_service.dart` — descarga con dio (con cookies), guarda en galería y deja copia propia para el Historial. Permisos por versión de Android.
+- `lib/services/history_service.dart` — persiste el historial de descargas (shared_preferences).
+- `lib/services/ads_service.dart` — banner + intersticial no invasivo + consentimiento UMP/GDPR.
+- `lib/screens/main_navigation_screen.dart` — navegación inferior Inicio/Historial.
 - `lib/screens/home_screen.dart` — UI: pegar link → analizar → descargar.
+- `lib/screens/downloads_screen.dart` — Historial: abrir/compartir descargas.
 - `lib/screens/webview_login_screen.dart` — login por WebView + captura de cookies.
 - `lib/widgets/banner_ad_widget.dart` — banner reutilizable.
 - `android/app/src/main/AndroidManifest.xml` — permisos + AdMob App ID.
+- `android/app/src/main/kotlin/.../MainActivity.kt` — applicationId `com.fbmediasaver.app`, minSdk 23.
 
 ## Convenciones
 
@@ -27,15 +32,15 @@ AdMob de forma no invasiva.
 
 ## Antes de compilar
 
-El repo trae `lib/`, el manifest y la config, pero NO las carpetas nativas.
-Correr `flutter create . --platforms=android --project-name fb_media_saver`
-(conservando el AndroidManifest del repo) y luego `flutter pub get`.
+El repo ya incluye el andamiaje nativo de Android (generado con
+`flutter create . --platforms=android --project-name fb_media_saver`,
+conservando el `AndroidManifest.xml` original). Alcanza con `flutter pub get`.
 
-## Pendientes principales
+## Pendientes / ideas futuras
 
-1. Robustecer `FacebookExtractor` (reels, /watch, /share, /photo, fotos HD, álbumes).
-2. Integrar cookies del WebView en el extractor y el download_service.
-3. Pantalla de historial de descargas.
-4. Ícono, splash y pulido de tema.
-5. Manejo de errores y estados vacíos.
-6. Firma de release y documentación de build del APK.
+1. Soporte álbumes/carruseles de fotos (descargar todas las fotos de un
+   álbum, no solo la principal).
+2. iOS (hoy el foco es Android; `flutter_launcher_icons`/`native_splash`
+   están configurados solo para `android: true`).
+3. Firma real de release: ver README, sección "Firmar el APK release"
+   (`android/key.properties.example`).

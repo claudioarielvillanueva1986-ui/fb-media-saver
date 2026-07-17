@@ -1,0 +1,15 @@
+# Copiá este archivo a android/key.properties (NO lo subas al repo; ya está
+# en .gitignore) y completá los datos de tu keystore real para firmar el APK
+# de release. Sin este archivo, `flutter build apk --release` sigue
+# funcionando pero firma con la clave de debug (no sirve para publicar).
+#
+# Generá el keystore una sola vez con:
+#   keytool -genkey -v -keystore ~/fb-media-saver-release.jks \
+#     -keyalg RSA -keysize 2048 -validity 10000 -alias fbmediasaver
+#
+# Guardá el .jks en un lugar seguro FUERA del repo (por ejemplo tu home).
+
+storePassword=TU_STORE_PASSWORD
+keyPassword=TU_KEY_PASSWORD
+keyAlias=fbmediasaver
+storeFile=/ruta/absoluta/o/relativa/a/fb-media-saver-release.jks
